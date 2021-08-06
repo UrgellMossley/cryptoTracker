@@ -40,6 +40,7 @@ body{
     z-index: -1000;
     
 }
+/* H1 element */
 .headline{
 font-weight: 900;
 font-size: 3rem;
@@ -163,6 +164,7 @@ span::after .active{
 }
 .card-title,.card-price,.card-marketCap,.card-priceChange{
     text-transform: capitalize;
+    z-index: -1000;
 }
 .card-title{
     font-size: 1.3rem;
@@ -186,9 +188,14 @@ span::after .active{
     border: none;
     margin: 1rem auto 0;
     outline: none;
-    border-radius: 1rem 1rem 0 0;
-
-    
+    border-radius: 1rem 1rem 0 0;   
+}
+.pinBtn{
+    font-size: 1rem;
+    visibility: hidden;
+}
+.visible{
+    visibility: visible;
 }
 
 /*  media queries*/
