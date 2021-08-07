@@ -161,6 +161,8 @@ span::after .active{
     padding: 1rem;
     z-index: 9999;
     transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
 }
 .card-title,.card-price,.card-marketCap,.card-priceChange{
     text-transform: capitalize;
@@ -191,11 +193,11 @@ span::after .active{
     border-radius: 1rem 1rem 0 0;   
 }
 .pinBtn{
-    font-size: 1rem;
-    visibility: hidden;
-}
-.visible{
-    visibility: visible;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 12%;
+    align-self: flex-start;
+    display: none;
 }
 
 /*  media queries*/

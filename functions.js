@@ -9,7 +9,7 @@ const idFetchMatch = (id)=>{
  
 //Function that takes a single Coin object and appends data to the DOM 
  const appendCoin = (item) => {
-   
+  
     /* Checks to see if this coin has users and is not just theoretical/scam */
     if (item.eur_market_cap > 0) {
     //Creates a div and declares its HTML
@@ -22,8 +22,8 @@ const idFetchMatch = (id)=>{
                               <h4 id="cardEl" class="card-title">${item.coinId}</h4>
                               <p id="cardEl" class="card-price">Price per coin (EUR): ${Math.round(item.eur * 100) / 100}</p>
                               <p id="cardEl" class="card-marketCap">EU Marketcap: $${numberWithCommas(Math.round(item.eur_market_cap * 100) / 100)}</p>
-                              <p id="cardEl" class="card-priceChange">Price change/24hrs(%): ${Math.round(item.eur_24h_change * 100) / 100}%</p>
-                              <button class="pinBtn"> Pin For Later?</button>
+                              <p id="cardEl" class="card-priceChange">Price change/24hrs(%): ${Math.round(item.eur_24h_change * 100) / 100}</p>
+                              <button class="pinBtn">Pin?</button>
                               </div>;
                            </div>`
     
@@ -31,20 +31,27 @@ const idFetchMatch = (id)=>{
     
     //Declaring DOM els, and event listners after dynamically generated els
   
-    //evt listener which fires when mouse hovers over DOM el
-  coinDomEL.addEventListener('mouseover', (e)=>{
-    //Declare node list
-        const pinBtn = document.querySelectorAll(`.pinBtn`);
-        //use elArry to get the index of the DOM el, same for the Btn so we can use for styling
-        elIndex = elArray.indexOf(coinDomEL);
-        //if hovered then will appear, if not will go
-        e.target.parentElement.id === `test` || e.target.id === `test`? pinBtn[elIndex].style.visibility = `visible` : pinBtn[elIndex].style.visibility = `hidden`;
-  })
+    //evt listener which fires when mouse hovers over DOM el to make elements appear/disappear
+    //use our elArray to make an index we use to target the approriate els
+   elArray.forEach(el =>el.addEventListener('mouseover', (e)=>{
+     let elIndex = elArray.indexOf(el)
+     const pinBtn = document.querySelectorAll(`.pinBtn`)
+     pinBtn[elIndex].style.display = "block"
+     }));
+
+    elArray.forEach(el=>el.addEventListener(`mouseout`,(e)=>{
+      let elIndex = elArray.indexOf(el)
+      const pinBtn = document.querySelectorAll(`.pinBtn`)    
+      pinBtn[elIndex].style.display = "none";      
+     }));
+    
     return coinResults.appendChild(coinDomEL);
- }};
+    }
+ };
   
   //Function that takes a coinId to create  a coin object 
 const fetchCoins = async(coinId) =>{
+    
     const priceURL = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=eur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true` 
     const response = await fetch(priceURL);
     response.status === 200 ? console.log(`Success`) : console.log(`Nah mate`)
