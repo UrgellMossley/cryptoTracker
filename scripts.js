@@ -3,8 +3,9 @@ const list = document.querySelector(`form`)
 const coinInput = document.querySelector(`#coin-choice`)
 const coinResults = document.querySelector(`.test-result`)
 const menuBtn = document.querySelector(`.hamburger`)
-const nav = document.querySelector(`.navbar`)    
+const nav = document.querySelector(`.navbar`)   
 let elArray = []
+let pinArray = []
 
 //Prevents form from refreshing page
 list.addEventListener(`submit`,(e)=>{
@@ -24,4 +25,4 @@ menuBtn.addEventListener(`click`,()=>{
 
  
 renderSuggestion(`xrp`)
-  
+
