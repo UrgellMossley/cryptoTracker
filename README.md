@@ -6,10 +6,9 @@ The prototype is pretty good to look at if I don't say so myself! It's fully res
 
 To come:
 
-- Resolve the issue of 429 error, reduce the amout of requests to API server
 - Add media queries and finalise UI 
-- Add modal with graphical information
 - Add top20 panel
+- local storage
 - More??
 
-Built using vanilla JS, CSS, HTML
+Built using vanilla JS, CSS, HTML, chart.js, moment.js
