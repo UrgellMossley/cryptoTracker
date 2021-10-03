@@ -34,6 +34,7 @@ body{
     bottom: 0;
     left: 0;
     width: 100vw;
+    max-width: 100vw;
     min-height: 50%;
     clip-path: polygon(0 83%, 100% 50%, 100% 100%, 0% 100%);
     background: #3374FF;
@@ -158,12 +159,15 @@ span::after .active{
     border: 0.01rem solid black;
     border-radius: 0.5rem;
     position: relative;
-    margin: 1rem 2rem;
+    margin: 2rem 2rem;
     padding: 1rem;
     z-index: 9999;
     transition: all 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
+}
+.moreInfo{
+    height: 30rem;
 }
 .card-title,.card-price,.card-marketCap,.card-priceChange{
     text-transform: capitalize;
@@ -193,11 +197,23 @@ span::after .active{
     outline: none;
     border-radius: 1rem 1rem 0 0;   
 }
+.btnBox{
+    display: flex;
+    justify-content: space-between;
+}
 .pinBtn{
     height: 3rem;
-    width: 3rem;
+    width: 4rem;
     border-radius: 12%;
     display: none;
 }
 
 /*  media queries*/
+#myChart{
+    padding: 0.5rem;
+    position: absolute;
+    bottom: 0;
+    align-self: center;
+    margin-top: 5rem;
+    
+}

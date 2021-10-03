@@ -11,18 +11,18 @@ const createDom = (item) => {
   //declare dom el
   const coinDomEL = document.createElement(`div`);
   //assign ID
-  coinDomEL.id = `cardX`;
+  
 
   //Declare the HTML of the DOM el using info from coin object
-  coinDomEL.innerHTML = `<div >
+  coinDomEL.innerHTML = `
                          <div id="test" class="card">
                          <h4 id="cardEl" class="card-title">${item.coinId}</h4>
                          <p id="cardEl" class="card-price">Price per coin (EUR): ${Math.round(item.eur * 100) / 100}</p>
                          <p id="cardEl" class="card-marketCap">EU Marketcap: $${numberWithCommas(Math.round(item.eur_market_cap * 100) / 100)}</p>
-                         <p id="cardEl" class="card-priceChange">Price change/24hrs(%): ${Math.round(item.eur_24h_change * 100) / 100}</p>
+                         <p id="cardEl" class="card-priceChange">Price change/24hrs(%): ${Math.round(item.eur_24h_change * 100) / 100}%</p>
                          <button class="pinBtn">Pin?</button>
-                         </div>
-                      </div>`
+                         </div>`
+                      
   //Push into array 
   elArray.push(coinDomEL);
   //Use the array to generate index for each el in the array
@@ -49,15 +49,91 @@ const createDom = (item) => {
       //if button is clicked put the item in a pin array which will be used to generate stored searches in local storage
       if (e.target === pinBtn[elIndex] && pinArray.indexOf(item) < 0){
         pinArray.push(item);
-        console.log(pinArray);
+        return pinArray
       }
-        
+      
+
 
     })
-  coinResults.appendChild(coinDomEL);
-  return elArray;
-  }
+    
+//Event listener to generate a Graph of historical data when domEl clicked
+  coinDomEL.addEventListener(`click`, (e)=>{
+    const infoDiv = document.createElement(`canvas`)
+    const pinBtn = document.querySelectorAll(`.pinBtn`);
+    const cardEl = document.querySelectorAll(`.card`)
+    const charLookup = document.querySelector(`#myChart`)
+   
+ 
+    
+    //Async Fetch function that returns an array of data points according to specified time (alpha only supports 90 days)
+    const fetchHistory = async (id) =>{
+      const url = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=eur&days=30&interval=daily`
+      const res =  await fetch(url)
+      const data = await res.json()
+      const normalised =  data[`prices`].map(item=>item[1])
+      return Promise.all(normalised) 
+    
+    }
+    
+     
 
+    let data = ()=> fetchHistory(item.coinId).then(res=>{
+    infoDiv.id = `myChart`
+    const ctx = document.getElementById('myChart').getContext('2d');
+    //declare chart as an attribute to the window object which is a global object. 
+      myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          //create entries for each day in the days array
+          labels: DAYS(),
+          datasets: [{
+              label: 'Price per Coin (EUR)',
+              data:res,
+              backgroundColor: [
+                  'rgba(0,0,0, 1)',
+              ],
+              borderColor: [
+                  'rgba(0,0,0, 1)',
+              ],
+              borderWidth: 0.8
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              },
+              x: {
+                min: 0,
+                max: res.length-1
+                }
+            }
+          }
+
+        });
+        
+      })
+    
+    
+    infoDiv.setAttribute(`width`,200)
+    infoDiv.setAttribute(`height`,200)  
+    if( cardEl[elIndex].contains(charLookup)){  
+      cardEl[elIndex].removeChild(charLookup)
+    } else {
+      cardEl[elIndex].appendChild(infoDiv)
+      data()
+    }
+            
+    if (e.target !== pinBtn[elIndex]) {   
+          cardEl[elIndex].classList.toggle(`moreInfo`)
+          
+        }
+    });
+
+    coinResults.appendChild(coinDomEL);
+    return elArray;
+}
+  
 //Function that takes a coinId to create  a coin object 
 const fetchCoins = async (coinId) => {
 
@@ -108,7 +184,7 @@ const allMatches = (searchString) => {
     //Use filter list to return a sanitised array of real coins
     const filteredList = DOMelList.filter(item => item.eur_market_cap > 0)
     //iterat through the list and append each coin as a Dom El
-    filteredList.forEach(item => createDom(item));
+    return filteredList.forEach(item => createDom(item));
   };
 
   return appendMatchDOM();
@@ -138,6 +214,19 @@ const renderSuggestion = (searchString) => {
     return allMatches(normalisedTxt);
   } else {
     //If no match at all:
-    return `Sorry no matches for this coin!`
+    return `Sorry no matches for this coin!`;
   }
 };
+
+const storedCoins = () =>{
+  const savedCoin = localStorage.getItem('savedCoins');
+  
+  try{
+      return savedCoin ? JSON.parse(savedCoin) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+
+
