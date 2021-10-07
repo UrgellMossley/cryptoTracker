@@ -40,6 +40,6 @@ menuBtn.addEventListener(`click`,()=>{
       //returns days array
       return days
     }
-
+    
   //By calling storedCoins, the aim is to auto populate DOM elements
-renderSuggestion(`xlm`)
+   pinArray.forEach(coin=>renderSuggestion(coin))

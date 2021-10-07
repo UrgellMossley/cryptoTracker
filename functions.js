@@ -63,7 +63,6 @@ const createDom = (item) => {
     //confirm that only the DOM element that triggers action is the Card. (not the Pin BTN)
     const confirmClickedEL = (e.target !== pinBtn[elIndex])
  
-    
     //Async Fetch function that returns an array of data points according to specified time (alpha only supports 90 days)
     const fetchHistory = async (id) =>{
       const url = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=eur&days=30&interval=daily`
@@ -71,10 +70,8 @@ const createDom = (item) => {
       const data = await res.json();
       const normalised =  data[`prices`].map(item=>item[1]);
       return Promise.all(normalised);
-    
     };
     
-     
     //generates a Chart based on past 30days price data and attaches it to DOM element via Chart JS
     let chartData = ()=> fetchHistory(item.coinId).then(res=>{
     infoDiv.id = `myChart`;
@@ -116,8 +113,6 @@ const createDom = (item) => {
         });
         
       })
-    
-   
     //conditionals control if the graph is added to removed from the DOM
     for (let i=0; i<cardEl.length;i++){
       if (cardEl[i].contains(charLookup) && (confirmClickedEL)){
