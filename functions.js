@@ -17,8 +17,8 @@ const createDom = (item) => {
   coinDomEL.innerHTML = `
                          <div id="test" class="card">
                          <h4 id="cardEl" class="card-title">${item.coinId}</h4>
-                         <p id="cardEl" class="card-price">Price per coin (EUR): ${Math.round(item.eur * 100) / 100}</p>
-                         <p id="cardEl" class="card-marketCap">EU Marketcap: $${numberWithCommas(Math.round(item.eur_market_cap * 100) / 100)}</p>
+                         <p id="cardEl" class="card-price">Price per coin (EUR): €${Math.round(item.eur * 100) / 100}</p>
+                         <p id="cardEl" class="card-marketCap">EU Marketcap: €${numberWithCommas(Math.round(item.eur_market_cap * 100) / 100)}</p>
                          <p id="cardEl" class="card-priceChange">Price change/24hrs(%): ${Math.round(item.eur_24h_change * 100) / 100}%</p>
                          <button class="pinBtn">Pin?</button>
                          </div>`
@@ -47,38 +47,40 @@ const createDom = (item) => {
   coinDomEL.addEventListener(`click`, (e) => {
       const pinBtn = document.querySelectorAll(`.pinBtn`);
       //if button is clicked put the item in a pin array which will be used to generate stored searches in local storage
-      if (e.target === pinBtn[elIndex] && pinArray.indexOf(item) < 0){
-        pinArray.push(item);
-        return pinArray
-      }
-      
+      if (e.target === pinBtn[elIndex] && pinArray.indexOf(item.coinId) < 0){
+           pinArray.push(item.coinId)
+           return window.localStorage.setItem("savedCoins",`${pinArray}`)
 
-
-    })
+      };
+    });
     
 //Event listener to generate a Graph of historical data when domEl clicked
   coinDomEL.addEventListener(`click`, (e)=>{
-    const infoDiv = document.createElement(`canvas`)
+    const infoDiv = document.createElement(`canvas`);
     const pinBtn = document.querySelectorAll(`.pinBtn`);
-    const cardEl = document.querySelectorAll(`.card`)
-    const charLookup = document.querySelector(`#myChart`)
-   
+    const cardEl = document.querySelectorAll(`.card`);
+    const charLookup = document.querySelector(`#myChart`);
+    //confirm that only the DOM element that triggers action is the Card. (not the Pin BTN)
+    const confirmClickedEL = (e.target !== pinBtn[elIndex])
  
     
     //Async Fetch function that returns an array of data points according to specified time (alpha only supports 90 days)
     const fetchHistory = async (id) =>{
       const url = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=eur&days=30&interval=daily`
-      const res =  await fetch(url)
-      const data = await res.json()
-      const normalised =  data[`prices`].map(item=>item[1])
-      return Promise.all(normalised) 
+      const res =  await fetch(url);
+      const data = await res.json();
+      const normalised =  data[`prices`].map(item=>item[1]);
+      return Promise.all(normalised);
     
-    }
+    };
     
      
-
-    let data = ()=> fetchHistory(item.coinId).then(res=>{
-    infoDiv.id = `myChart`
+    //generates a Chart based on past 30days price data and attaches it to DOM element via Chart JS
+    let chartData = ()=> fetchHistory(item.coinId).then(res=>{
+    infoDiv.id = `myChart`;
+    infoDiv.setAttribute(`width`,200);
+    infoDiv.setAttribute(`height`,200); 
+    cardEl[elIndex].appendChild(infoDiv)
     const ctx = document.getElementById('myChart').getContext('2d');
     //declare chart as an attribute to the window object which is a global object. 
       myChart = new Chart(ctx, {
@@ -86,6 +88,7 @@ const createDom = (item) => {
       data: {
           //create entries for each day in the days array
           labels: DAYS(),
+          //Create graph parameters (using chart.js docs)
           datasets: [{
               label: 'Price per Coin (EUR)',
               data:res,
@@ -114,22 +117,21 @@ const createDom = (item) => {
         
       })
     
-    
-    infoDiv.setAttribute(`width`,200)
-    infoDiv.setAttribute(`height`,200)  
-    if( cardEl[elIndex].contains(charLookup)){  
-      cardEl[elIndex].removeChild(charLookup)
-    } else {
-      cardEl[elIndex].appendChild(infoDiv)
-      data()
+   
+    //conditionals control if the graph is added to removed from the DOM
+    for (let i=0; i<cardEl.length;i++){
+      if (cardEl[i].contains(charLookup) && (confirmClickedEL)){
+        cardEl[i].removeChild(charLookup)
+      } else if (confirmClickedEL){
+        //if not found in parent elements then add it and call graph function
+         chartData()
+      };
     }
-            
-    if (e.target !== pinBtn[elIndex]) {   
+    //toggles class which makes the card big or small  
+    if (confirmClickedEL) {   
           cardEl[elIndex].classList.toggle(`moreInfo`)
-          
         }
     });
-
     coinResults.appendChild(coinDomEL);
     return elArray;
 }
@@ -217,12 +219,14 @@ const renderSuggestion = (searchString) => {
     return `Sorry no matches for this coin!`;
   }
 };
-
+//local storage. Try catch function allows us to store pinned coins in LS, issue is how to we render each item in pin array to DOM?
 const storedCoins = () =>{
   const savedCoin = localStorage.getItem('savedCoins');
-  
-  try{
-      return savedCoin ? JSON.parse(savedCoin) : [];
+  //create an array from LS to be read and auto populate DOM elements on load
+  const storedCoinArr = [savedCoin]
+  //If there is something in LS return the Arr, if not empty Arr
+  try {
+      return savedCoin ? storedCoinArr : [];
   } catch (e) {
     return [];
   }
