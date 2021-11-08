@@ -34,12 +34,14 @@ body{
     bottom: 0;
     left: 0;
     width: 100vw;
+    max-width: 100%;
     min-height: 50%;
     clip-path: polygon(0 83%, 100% 50%, 100% 100%, 0% 100%);
     background: #3374FF;
     z-index: -1000;
     
 }
+/* H1 element */
 .headline{
 font-weight: 900;
 font-size: 3rem;
@@ -91,12 +93,16 @@ form{
 }
 .nav-item,  a{
     list-style: none;
+    display: block;
     text-decoration: none;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
     font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: #0034A2;
+    color: #3374FF;
+}
+.nav-item:hover  a{
+    color: #fff;
 }
 .nav-item:hover{
     background: #FFC818;
@@ -135,7 +141,6 @@ span::after{
     position: absolute;
     top: -0.5rem;
     width: 2rem;
-    
 }
 span::before{
     content: " ";
@@ -150,22 +155,29 @@ span::after .active{
 .card{
     font-size: 1rem;
     background: #fff;
-    opacity: 0.7;
     color: #000;
-    height: 10rem;
+    height: 11rem;
     box-shadow: 0 1.5rem 2.4rem .1rem rgba(0,0,0,0.72);
     border: 0.01rem solid black;
     border-radius: 0.5rem;
-    margin: 1rem 2rem;
+    position: relative;
+    margin: 2rem 2rem;
     padding: 1rem;
     z-index: 9999;
     transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+.moreInfo{
+    height: 30rem;
 }
 .card-title,.card-price,.card-marketCap,.card-priceChange{
     text-transform: capitalize;
+    z-index: -1000;
 }
 .card-title{
     font-size: 1.3rem;
+    align-self: center;
 }
 .card:hover{
     cursor:pointer;
@@ -173,7 +185,11 @@ span::after .active{
 }
 .test-result{
     display: inline;
-    padding-bottom: 5rem;
+}
+.sub-headline{
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 2rem;
 }
 #coin-choice-blurb{
     font-size: 1rem;
@@ -186,9 +202,50 @@ span::after .active{
     border: none;
     margin: 1rem auto 0;
     outline: none;
-    border-radius: 1rem 1rem 0 0;
+    border-radius: 1rem 1rem 0 0;   
+}
+.btnBox{
+    display: flex;
+    justify-content: space-between;
+}
+.btn{
+    opacity: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.pinBtn{
+    margin: 0.5rem 0;
+    background: #FFC818;
+    align-self: center;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10%;
+    width: 5rem;
+    height: 2rem;
+    font-family: inherit;
+    font-weight: 600;
+    border: none;
+}
+.delBtn{
+    border: none;
+    background: none;
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    font-size: 1.2rem;
 
+}
+.delBtn:hover{
+    font-size: 1.5rem;
+ }
+.pinBtn:hover{
+    transform: scale(1.2);
+}
+/*  media queries*/
+#myChart{
+    padding: 0.5rem;
+    position: absolute;
+    bottom: 0;
+    align-self: center;
+    margin-top: 5rem;
     
 }
-
-/*  media queries*/
